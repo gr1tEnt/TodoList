@@ -1,5 +1,9 @@
 package com.gr1tEnt.api;
 
+import com.gr1tEnt.model.*;
+
+import java.util.List;
+
 public interface TaskMenu {
     void addTask(String title, String description, TaskState taskState);
     void addWorkTask(String title, String description, TaskState taskState);
