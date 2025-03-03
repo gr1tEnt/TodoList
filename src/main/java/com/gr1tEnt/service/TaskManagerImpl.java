@@ -60,7 +60,7 @@ public class TaskManagerImpl implements TaskManager {
         List<PersonalTask> personalTasks = new ArrayList<>();
         for (Task task : tasks) {
             if (task instanceof PersonalTask) {
-                tasks.add(task);
+                personalTasks.add((PersonalTask) task);
             }
         }
         return personalTasks;
@@ -76,7 +76,7 @@ public class TaskManagerImpl implements TaskManager {
             Task task = iterator.next();
             if (task.getId() == id) {
                 iterator.remove();
-                break;
+                return;
             }
         }
         throw new TaskNotFoundException("Task with id " + id + " not found.");
