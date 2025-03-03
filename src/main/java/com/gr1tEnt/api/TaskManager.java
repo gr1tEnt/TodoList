@@ -25,5 +25,9 @@ public interface TaskManager {
     List<Task> getAllTaskByStatus(TaskState taskState);
 
     List<Task> searchTask(String keyword);
-    Task getTaskById(int id);
+    Task getTaskById(int id) throws TaskNotFoundException;
+
+    void addStudyTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException;
+    List<StudyTask> getStudyTasks();
+    StudyTask getStudyTaskById(int id) throws TaskNotFoundException;
 }

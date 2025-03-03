@@ -7,6 +7,7 @@ import com.gr1tEnt.exception.InvalidTaskDataException;
 import com.gr1tEnt.exception.InvalidTaskStateException;
 import com.gr1tEnt.exception.TaskNotFoundException;
 import com.gr1tEnt.model.PersonalTask;
+import com.gr1tEnt.model.StudyTask;
 import com.gr1tEnt.model.Task;
 import com.gr1tEnt.model.WorkTask;
 
@@ -120,13 +121,41 @@ public class TaskManagerImpl implements TaskManager {
     }
 
     @Override
-    public Task getTaskById(int id) {
+    public Task getTaskById(int id) throws TaskNotFoundException {
         for (Task task : tasks) {
             if (task.getId() == id) {
                 return task;
             }
         }
-        return null;
+        throw new TaskNotFoundException("Task with id " + id + " not found.");
+    }
+
+    @Override
+    public void addStudyTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
+        checkInvalidTaskData(title, taskState);
+        tasks.add(new StudyTask(taskId, title, description, taskState));
+        taskId++;
+    }
+
+    @Override
+    public List<StudyTask> getStudyTasks() {
+        List<StudyTask> studyTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task instanceof StudyTask) {
+                studyTasks.add((StudyTask) task);
+            }
+        }
+        return studyTasks;
+    }
+
+    @Override
+    public StudyTask getStudyTaskById(int id) throws TaskNotFoundException {
+        for (Task task : tasks) {
+            if (taskId == id) {
+                return (StudyTask) task;
+            }
+        }
+        throw new TaskNotFoundException("Task with id " + id + " not found.");
     }
 
     private void checkInvalidTaskData(String title, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
