@@ -17,7 +17,7 @@ import java.util.List;
 
 public class TaskManagerImpl implements TaskManager {
     private final List<Task> tasks = new ArrayList<>();
-    public static int taskId;
+    public static int taskId = 1;
 
     @Override
     public void addTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
@@ -122,6 +122,14 @@ public class TaskManagerImpl implements TaskManager {
 
     @Override
     public Task getTaskById(int id) throws TaskNotFoundException {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Invalid id.");
+        }
+
+        if (tasks.isEmpty()) {
+            throw new EmptyTaskListException("List is empty.");
+        }
+
         for (Task task : tasks) {
             if (task.getId() == id) {
                 return task;
@@ -151,11 +159,29 @@ public class TaskManagerImpl implements TaskManager {
     @Override
     public StudyTask getStudyTaskById(int id) throws TaskNotFoundException {
         for (Task task : tasks) {
-            if (taskId == id) {
+            if (task.getId() == id && task instanceof StudyTask) {
                 return (StudyTask) task;
             }
         }
-        throw new TaskNotFoundException("Task with id " + id + " not found.");
+        throw new TaskNotFoundException("Study task with id " + id + " not found.");
+    }
+
+    @Override
+    public List<Task> getTasksByStatus(TaskState taskState) {
+        if (taskState != null) {
+            List<Task> foundTasks = new ArrayList<>();
+            if (tasks.isEmpty()) {
+                throw new EmptyTaskListException("List with tasks is empty!");
+            }
+            for (Task task : tasks) {
+                if (task.getTaskState() == taskState && !tasks.isEmpty()) {
+                    foundTasks.add(task);
+                }
+            }
+            return foundTasks;
+        } else {
+            throw new IllegalArgumentException("Invalid status.");
+        }
     }
 
     private void checkInvalidTaskData(String title, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {

@@ -30,4 +30,6 @@ public interface TaskManager {
     void addStudyTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException;
     List<StudyTask> getStudyTasks();
     StudyTask getStudyTaskById(int id) throws TaskNotFoundException;
+
+    List<Task> getTasksByStatus(TaskState taskState) throws InvalidTaskStateException;
 }
