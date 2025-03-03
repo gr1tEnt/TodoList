@@ -1,5 +1,6 @@
 package com.gr1tEnt.api;
 
+import com.gr1tEnt.constant.TaskState;
 import com.gr1tEnt.model.*;
 
 import java.util.List;

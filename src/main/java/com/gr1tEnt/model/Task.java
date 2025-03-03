@@ -1,5 +1,7 @@
 package com.gr1tEnt.model;
 
+import com.gr1tEnt.constant.TaskState;
+
 import java.util.Objects;
 
 public class Task {

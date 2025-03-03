@@ -1,5 +1,7 @@
 package com.gr1tEnt.model;
 
+import com.gr1tEnt.constant.TaskState;
+
 public class PersonalTask extends Task {
 
     public PersonalTask(int id, String title, String description, TaskState taskState) {
@@ -14,4 +16,5 @@ public class PersonalTask extends Task {
                 ", description='" + getDescription() + '\'' +
                 ", taskState=" + getTaskState() +
                 '}';
+    }
 }
