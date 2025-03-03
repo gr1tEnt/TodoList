@@ -2,6 +2,10 @@ package com.gr1tEnt.service;
 
 import com.gr1tEnt.api.TaskManager;
 import com.gr1tEnt.constant.TaskState;
+import com.gr1tEnt.exception.EmptyTaskListException;
+import com.gr1tEnt.exception.InvalidTaskDataException;
+import com.gr1tEnt.exception.InvalidTaskStateException;
+import com.gr1tEnt.exception.TaskNotFoundException;
 import com.gr1tEnt.model.PersonalTask;
 import com.gr1tEnt.model.Task;
 import com.gr1tEnt.model.WorkTask;
@@ -15,19 +19,22 @@ public class TaskManagerImpl implements TaskManager {
     public static int taskId;
 
     @Override
-    public void addTask(String title, String description, TaskState taskState) {
+    public void addTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
+        checkInvalidTaskData(title, taskState);
         tasks.add(new Task(taskId, title, description, taskState));
         taskId++;
     }
 
     @Override
-    public void addWorkTask(String title, String description, TaskState taskState) {
+    public void addWorkTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
+        checkInvalidTaskData(title, taskState);
         tasks.add(new WorkTask(taskId, title, description, taskState));
         taskId++;
     }
 
     @Override
-    public void addPersonalTask(String title, String description, TaskState taskState) {
+    public void addPersonalTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
+        checkInvalidTaskData(title, taskState);
         tasks.add(new PersonalTask(taskId, title, description, taskState));
         taskId++;
     }
@@ -60,7 +67,10 @@ public class TaskManagerImpl implements TaskManager {
     }
 
     @Override
-    public void removeTask(int id) {
+    public void removeTask(int id) throws TaskNotFoundException {
+        if (tasks.isEmpty()) {
+            throw new EmptyTaskListException("Task list is empty.");
+        }
         Iterator<Task> iterator = tasks.iterator();
         while (iterator.hasNext()) {
             Task task = iterator.next();
@@ -69,6 +79,7 @@ public class TaskManagerImpl implements TaskManager {
                 break;
             }
         }
+        throw new TaskNotFoundException("Task with id " + id + " not found.");
     }
 
     @Override
@@ -116,5 +127,14 @@ public class TaskManagerImpl implements TaskManager {
             }
         }
         return null;
+    }
+
+    private void checkInvalidTaskData(String title, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
+        if (title == null || title.isEmpty()) {
+            throw new InvalidTaskDataException("Task must have a title.");
+        }
+        if (taskState == null) {
+            throw new InvalidTaskStateException("Task state cannot be null.");
+        }
     }
 }
