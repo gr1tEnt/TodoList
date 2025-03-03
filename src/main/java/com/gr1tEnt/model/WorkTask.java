@@ -1,5 +1,7 @@
 package com.gr1tEnt.model;
 
+import com.gr1tEnt.constant.TaskState;
+
 public class WorkTask extends Task {
 
     public WorkTask(int id, String title, String description, TaskState taskState) {

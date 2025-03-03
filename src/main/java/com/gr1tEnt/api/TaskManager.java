@@ -5,7 +5,7 @@ import com.gr1tEnt.model.*;
 
 import java.util.List;
 
-public interface TaskMenu {
+public interface TaskManager {
     void addTask(String title, String description, TaskState taskState);
     void addWorkTask(String title, String description, TaskState taskState);
     void addPersonalTask(String title, String description, TaskState taskState);
@@ -15,7 +15,7 @@ public interface TaskMenu {
     List<PersonalTask> getAllPersonalTasks();
 
     void removeTask(int id);
-    void removeAllTasks(int id);
+    void removeAllTasks();
 
     void changeTaskStatus(int id, TaskState taskState);
 
