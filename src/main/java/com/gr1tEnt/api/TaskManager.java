@@ -21,7 +21,7 @@ public interface TaskManager {
     void removeTask(int id) throws TaskNotFoundException;
     void removeAllTasks();
 
-    void changeTaskStatus(int id, TaskState taskState);
+    void changeTaskStatus(int id, TaskState taskState) throws TaskNotFoundException, RuntimeException;
 
     List<Task> getAllTaskByStatus(TaskState taskState);
 

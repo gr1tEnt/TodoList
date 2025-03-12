@@ -98,13 +98,21 @@ public class TaskManagerImpl implements TaskManager {
 
     @Override
     public void changeTaskStatus(int id, TaskState taskState) {
-        for (Task task : tasks) {
-            if (task.getId() == id) {
-                task.setTaskState(taskState);
-                break;
-            }
-        }
+        tasks.stream()
+                .filter(task -> task.getId() == id)
+                .findFirst()
+                .ifPresentOrElse(
+                        task -> task.setTaskState(taskState),
+                        () -> {
+                            try {
+                                throw new TaskNotFoundException("Task with id " + id + " not found.");
+                            } catch (TaskNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                );
     }
+
 
     @Override
     public List<Task> getAllTaskByStatus(TaskState taskState) {
