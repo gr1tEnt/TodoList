@@ -4,8 +4,8 @@ import com.gr1tEnt.constant.TaskState;
 
 public class PersonalTask extends Task {
 
-    public PersonalTask(int id, String title, String description, TaskState taskState) {
-        super(id, title, description, taskState);
+    protected PersonalTask(Builder builder) {
+        super(builder);
     }
 
     @Override
@@ -17,5 +17,12 @@ public class PersonalTask extends Task {
                 ", taskState=" + getTaskState() +
                 ", createdAt=" + getCreatedAt() +
                 '}';
+    }
+
+    public static class Builder extends Task.Builder {
+        @Override
+        public Task build() {
+            return new PersonalTask(this);
+        }
     }
 }

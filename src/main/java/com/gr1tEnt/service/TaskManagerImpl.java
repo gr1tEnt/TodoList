@@ -32,14 +32,26 @@ public class TaskManagerImpl implements TaskManager {
     @Override
     public void addWorkTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
         checkInvalidTaskData(title, taskState);
-        tasks.add(new WorkTask(taskId, title, description, taskState));
+        Task workTask = new WorkTask.Builder()
+                .setId(taskId)
+                .setTitle(title)
+                .setDescription(description)
+                .setTaskState(taskState)
+                .build();
+        tasks.add(workTask);
         taskId++;
     }
 
     @Override
     public void addPersonalTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
         checkInvalidTaskData(title, taskState);
-        tasks.add(new PersonalTask(taskId, title, description, taskState));
+        Task personalTask = new PersonalTask.Builder()
+                .setId(taskId)
+                .setTitle(title)
+                .setDescription(description)
+                .setTaskState(taskState)
+                .build();
+        tasks.add(personalTask);
         taskId++;
     }
 
@@ -132,7 +144,13 @@ public class TaskManagerImpl implements TaskManager {
     @Override
     public void addStudyTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
         checkInvalidTaskData(title, taskState);
-        tasks.add(new StudyTask(taskId, title, description, taskState));
+        Task studyTask = new Task.Builder()
+                .setId(taskId)
+                .setTitle(title)
+                .setDescription(description)
+                .setTaskState(taskState)
+                .build();
+        tasks.add(studyTask);
         taskId++;
     }
 

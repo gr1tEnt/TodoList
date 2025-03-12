@@ -7,21 +7,14 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int id;
     private String title;
     private String description;
     private TaskState taskState;
     private LocalDateTime createdAt;
 
-    public Task(int id, String title, String description, TaskState taskState) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.taskState = taskState;
-        this.createdAt = LocalDateTime.now();
-    }
-
-    private Task(Builder builder) {
+    protected Task(Builder builder) {
         this.id = builder.id;
         this.title = builder.title;
         this.description = builder.description;
@@ -70,16 +63,8 @@ public class Task implements Serializable {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getDescription() {
