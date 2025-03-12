@@ -62,24 +62,18 @@ public class TaskManagerImpl implements TaskManager {
 
     @Override
     public List<WorkTask> getAllWorkTasks() {
-        List<WorkTask> workTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task instanceof WorkTask) {
-                workTasks.add((WorkTask) task);
-            }
-        }
-        return workTasks;
+        return tasks.stream()
+                .filter(task -> task instanceof WorkTask)
+                .map(task -> (WorkTask) task)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<PersonalTask> getAllPersonalTasks() {
-        List<PersonalTask> personalTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task instanceof PersonalTask) {
-                personalTasks.add((PersonalTask) task);
-            }
-        }
-        return personalTasks;
+        return tasks.stream()
+                .filter(task -> task instanceof PersonalTask)
+                .map(task -> (PersonalTask) task)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -144,7 +138,7 @@ public class TaskManagerImpl implements TaskManager {
     @Override
     public void addStudyTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
         checkInvalidTaskData(title, taskState);
-        Task studyTask = new Task.Builder()
+        Task studyTask = new StudyTask.Builder()
                 .setId(taskId)
                 .setTitle(title)
                 .setDescription(description)
@@ -156,23 +150,10 @@ public class TaskManagerImpl implements TaskManager {
 
     @Override
     public List<StudyTask> getStudyTasks() {
-        List<StudyTask> studyTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task instanceof StudyTask) {
-                studyTasks.add((StudyTask) task);
-            }
-        }
-        return studyTasks;
-    }
-
-    @Override
-    public StudyTask getStudyTaskById(int id) throws TaskNotFoundException {
-        for (Task task : tasks) {
-            if (task.getId() == id && task instanceof StudyTask) {
-                return (StudyTask) task;
-            }
-        }
-        throw new TaskNotFoundException("Study task with id " + id + " not found.");
+        return tasks.stream()
+                .filter(task -> task instanceof StudyTask)
+                .map(task -> (StudyTask) task)
+                .collect(Collectors.toList());
     }
 
     @Override
