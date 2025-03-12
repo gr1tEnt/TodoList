@@ -9,10 +9,7 @@ import com.gr1tEnt.model.Task;
 import com.gr1tEnt.model.WorkTask;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TaskManagerImpl implements TaskManager {
@@ -78,15 +75,14 @@ public class TaskManagerImpl implements TaskManager {
         if (tasks.isEmpty()) {
             throw new EmptyTaskListException("Task list is empty.");
         }
-        Iterator<Task> iterator = tasks.iterator();
-        while (iterator.hasNext()) {
-            Task task = iterator.next();
-            if (task.getId() == id) {
-                iterator.remove();
-                return;
-            }
+        Optional<Task> taskToRemove = tasks.stream()
+                .filter(task -> task.getId() == id)
+                .findFirst();
+        if (taskToRemove.isPresent()) {
+            tasks.remove(taskToRemove.get());
+        } else {
+            throw new TaskNotFoundException("Task with id " + id + " not found.");
         }
-        throw new TaskNotFoundException("Task with id " + id + " not found.");
     }
 
     @Override
