@@ -15,6 +15,7 @@ public class PersonalTask extends Task {
                 ", title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", taskState=" + getTaskState() +
+                ", taskState=" + getTaskState() +
                 '}';
     }
 }

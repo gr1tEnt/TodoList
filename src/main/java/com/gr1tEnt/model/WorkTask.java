@@ -15,6 +15,7 @@ public class WorkTask extends Task {
                 ", title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", taskState=" + getTaskState() +
+                ", taskState=" + getCreatedAt() +
                 '}';
     }
 }
