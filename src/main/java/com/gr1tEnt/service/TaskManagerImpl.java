@@ -119,13 +119,10 @@ public class TaskManagerImpl implements TaskManager {
 
     @Override
     public List<Task> searchTask(String keyword) {
-        List<Task> foundTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getTitle().contains(keyword) || task.getDescription().contains(keyword)) {
-                foundTasks.add(task);
-            }
-        }
-        return foundTasks;
+        return tasks.stream()
+                .filter(task -> task.getTitle().contains(keyword.toLowerCase()) ||
+                        task.getDescription().contains(keyword.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     @Override
