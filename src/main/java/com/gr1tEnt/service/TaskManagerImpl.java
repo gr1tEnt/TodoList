@@ -22,7 +22,13 @@ public class TaskManagerImpl implements TaskManager {
     @Override
     public void addTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
         checkInvalidTaskData(title, taskState);
-        tasks.add(new Task(taskId, title, description, taskState));
+        Task task = new Task.Builder()
+                .setId(taskId)
+                .setTitle(title)
+                .setDescription(description)
+                .setTaskState(taskState)
+                .build();
+        tasks.add(task);
         taskId++;
     }
 

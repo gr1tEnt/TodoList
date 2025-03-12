@@ -20,6 +20,47 @@ public class Task {
         this.createdAt = LocalDateTime.now();
     }
 
+    private Task(Builder builder) {
+        this.id = builder.id;
+        this.title = builder.title;
+        this.description = builder.description;
+        this.taskState = builder.taskState;
+        this.createdAt = builder.createdAt;
+    }
+
+    public static class Builder {
+        private int id;
+        private String title;
+        private String description;
+        private TaskState taskState;
+        private LocalDateTime createdAt;
+
+        public Builder setId(int id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setTaskState(TaskState taskState) {
+            this.taskState = taskState;
+            return this;
+        }
+
+        public Task build() {
+            this.createdAt = LocalDateTime.now();
+            return new Task(this);
+        }
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
