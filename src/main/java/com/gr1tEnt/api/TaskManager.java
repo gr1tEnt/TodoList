@@ -1,6 +1,7 @@
 package com.gr1tEnt.api;
 
 import com.gr1tEnt.constant.TaskState;
+import com.gr1tEnt.exception.FileOperationException;
 import com.gr1tEnt.exception.InvalidTaskDataException;
 import com.gr1tEnt.exception.InvalidTaskStateException;
 import com.gr1tEnt.exception.TaskNotFoundException;
@@ -20,7 +21,7 @@ public interface TaskManager {
     void removeTask(int id) throws TaskNotFoundException;
     void removeAllTasks();
 
-    void changeTaskStatus(int id, TaskState taskState);
+    void changeTaskStatus(int id, TaskState taskState) throws TaskNotFoundException, RuntimeException;
 
     List<Task> getAllTaskByStatus(TaskState taskState);
 
@@ -29,7 +30,9 @@ public interface TaskManager {
 
     void addStudyTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException;
     List<StudyTask> getStudyTasks();
-    StudyTask getStudyTaskById(int id) throws TaskNotFoundException;
 
     List<Task> getTasksByStatus(TaskState taskState) throws InvalidTaskStateException;
+
+    void saveTasksToFile(String path) throws FileOperationException;
+    List<Task> readTasksFromFile(String path) throws FileOperationException;
 }
