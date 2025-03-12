@@ -18,6 +18,7 @@ public class StudyTask extends Task {
                 ", createdAt=" + getCreatedAt() +
                 '}';
     }
+
     public static class Builder extends Task.Builder {
         @Override
         public Task build() {
