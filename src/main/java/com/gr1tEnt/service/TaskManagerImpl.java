@@ -126,20 +126,9 @@ public class TaskManagerImpl implements TaskManager {
 
     @Override
     public Task getTaskById(int id) throws TaskNotFoundException {
-        if (id <= 0) {
-            throw new IllegalArgumentException("Invalid id.");
-        }
-
-        if (tasks.isEmpty()) {
-            throw new EmptyTaskListException("List is empty.");
-        }
-
-        for (Task task : tasks) {
-            if (task.getId() == id) {
-                return task;
-            }
-        }
-        throw new TaskNotFoundException("Task with id " + id + " not found.");
+        return tasks.stream()
+                .filter(task -> task.getId() == id).findFirst()
+                .orElseThrow(() -> new TaskNotFoundException("Task with id " + id + " not found."));
     }
 
     @Override
