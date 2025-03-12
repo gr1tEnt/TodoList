@@ -2,15 +2,13 @@ package com.gr1tEnt.service;
 
 import com.gr1tEnt.api.TaskManager;
 import com.gr1tEnt.constant.TaskState;
-import com.gr1tEnt.exception.EmptyTaskListException;
-import com.gr1tEnt.exception.InvalidTaskDataException;
-import com.gr1tEnt.exception.InvalidTaskStateException;
-import com.gr1tEnt.exception.TaskNotFoundException;
+import com.gr1tEnt.exception.*;
 import com.gr1tEnt.model.PersonalTask;
 import com.gr1tEnt.model.StudyTask;
 import com.gr1tEnt.model.Task;
 import com.gr1tEnt.model.WorkTask;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -188,6 +186,29 @@ public class TaskManagerImpl implements TaskManager {
         } else {
             throw new IllegalArgumentException("Invalid status.");
         }
+    }
+
+    @Override
+    public void saveTasksToFile(String path) throws FileOperationException {
+        try (FileOutputStream fileOut = new FileOutputStream(path);
+             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+            out.writeObject(tasks);
+        } catch (IOException e) {
+            throw new FileOperationException(e);
+        }
+    }
+
+    @Override
+    public List<Task> readTasksFromFile(String path) throws FileOperationException {
+        List<Task> taskList;
+        try (FileInputStream fileIn = new FileInputStream(path);
+             ObjectInputStream in = new ObjectInputStream(fileIn)) {
+            taskList = (List<Task>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new FileOperationException(e);
+        }
+        tasks.addAll(taskList);
+        return tasks;
     }
 
     private void checkInvalidTaskData(String title, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {

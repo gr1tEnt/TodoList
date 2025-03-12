@@ -14,6 +14,7 @@ public class StudyTask extends Task {
                 ", title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", taskState=" + getTaskState() +
+                ", createdAt=" + getCreatedAt() +
                 '}';
     }
 }

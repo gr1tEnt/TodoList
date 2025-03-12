@@ -2,10 +2,11 @@ package com.gr1tEnt.model;
 
 import com.gr1tEnt.constant.TaskState;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Task {
+public class Task implements Serializable {
     private int id;
     private String title;
     private String description;
