@@ -116,13 +116,9 @@ public class TaskManagerImpl implements TaskManager {
 
     @Override
     public List<Task> getAllTaskByStatus(TaskState taskState) {
-        List<Task> foundTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getTaskState() == taskState) {
-                foundTasks.add(task);
-            }
-        }
-        return foundTasks;
+        return tasks.stream()
+                .filter(task -> task.getTaskState() == taskState)
+                .collect(Collectors.toList());
     }
 
     @Override
