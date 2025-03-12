@@ -10,8 +10,10 @@ import com.gr1tEnt.model.WorkTask;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TaskManagerImpl implements TaskManager {
     private final List<Task> tasks = new ArrayList<>();
@@ -161,20 +163,9 @@ public class TaskManagerImpl implements TaskManager {
 
     @Override
     public List<Task> getTasksByStatus(TaskState taskState) {
-        if (taskState != null) {
-            List<Task> foundTasks = new ArrayList<>();
-            if (tasks.isEmpty()) {
-                throw new EmptyTaskListException("List with tasks is empty!");
-            }
-            for (Task task : tasks) {
-                if (task.getTaskState() == taskState && !tasks.isEmpty()) {
-                    foundTasks.add(task);
-                }
-            }
-            return foundTasks;
-        } else {
-            throw new IllegalArgumentException("Invalid status.");
-        }
+        return tasks.stream()
+                .filter(task -> task.getTaskState().equals(taskState))
+                .collect(Collectors.toList());
     }
 
     @Override
