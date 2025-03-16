@@ -4,9 +4,9 @@ import com.gr1tEnt.constant.TaskState;
 
 public class WorkTask extends Task {
 
-    public WorkTask(int id, String title, String description, TaskState taskState) {
-        super(id, title, description, taskState);
-        }
+    protected WorkTask(Builder builder) {
+        super(builder);
+    }
 
     @Override
     public String toString() {
@@ -15,6 +15,14 @@ public class WorkTask extends Task {
                 ", title='" + getTitle() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", taskState=" + getTaskState() +
+                ", createdAt=" + getCreatedAt() +
                 '}';
+    }
+
+    public static class Builder extends Task.Builder {
+        @Override
+        public Task build() {
+            return new WorkTask(this);
+        }
     }
 }

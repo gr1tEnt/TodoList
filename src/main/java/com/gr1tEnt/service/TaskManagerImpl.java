@@ -2,18 +2,15 @@ package com.gr1tEnt.service;
 
 import com.gr1tEnt.api.TaskManager;
 import com.gr1tEnt.constant.TaskState;
-import com.gr1tEnt.exception.EmptyTaskListException;
-import com.gr1tEnt.exception.InvalidTaskDataException;
-import com.gr1tEnt.exception.InvalidTaskStateException;
-import com.gr1tEnt.exception.TaskNotFoundException;
+import com.gr1tEnt.exception.*;
 import com.gr1tEnt.model.PersonalTask;
 import com.gr1tEnt.model.StudyTask;
 import com.gr1tEnt.model.Task;
 import com.gr1tEnt.model.WorkTask;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TaskManagerImpl implements TaskManager {
     private final List<Task> tasks = new ArrayList<>();
@@ -22,21 +19,39 @@ public class TaskManagerImpl implements TaskManager {
     @Override
     public void addTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
         checkInvalidTaskData(title, taskState);
-        tasks.add(new Task(taskId, title, description, taskState));
+        Task task = new Task.Builder()
+                .setId(taskId)
+                .setTitle(title)
+                .setDescription(description)
+                .setTaskState(taskState)
+                .build();
+        tasks.add(task);
         taskId++;
     }
 
     @Override
     public void addWorkTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
         checkInvalidTaskData(title, taskState);
-        tasks.add(new WorkTask(taskId, title, description, taskState));
+        Task workTask = new WorkTask.Builder()
+                .setId(taskId)
+                .setTitle(title)
+                .setDescription(description)
+                .setTaskState(taskState)
+                .build();
+        tasks.add(workTask);
         taskId++;
     }
 
     @Override
     public void addPersonalTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
         checkInvalidTaskData(title, taskState);
-        tasks.add(new PersonalTask(taskId, title, description, taskState));
+        Task personalTask = new PersonalTask.Builder()
+                .setId(taskId)
+                .setTitle(title)
+                .setDescription(description)
+                .setTaskState(taskState)
+                .build();
+        tasks.add(personalTask);
         taskId++;
     }
 
@@ -47,24 +62,18 @@ public class TaskManagerImpl implements TaskManager {
 
     @Override
     public List<WorkTask> getAllWorkTasks() {
-        List<WorkTask> workTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task instanceof WorkTask) {
-                workTasks.add((WorkTask) task);
-            }
-        }
-        return workTasks;
+        return tasks.stream()
+                .filter(task -> task instanceof WorkTask)
+                .map(task -> (WorkTask) task)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<PersonalTask> getAllPersonalTasks() {
-        List<PersonalTask> personalTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task instanceof PersonalTask) {
-                personalTasks.add((PersonalTask) task);
-            }
-        }
-        return personalTasks;
+        return tasks.stream()
+                .filter(task -> task instanceof PersonalTask)
+                .map(task -> (PersonalTask) task)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -72,15 +81,14 @@ public class TaskManagerImpl implements TaskManager {
         if (tasks.isEmpty()) {
             throw new EmptyTaskListException("Task list is empty.");
         }
-        Iterator<Task> iterator = tasks.iterator();
-        while (iterator.hasNext()) {
-            Task task = iterator.next();
-            if (task.getId() == id) {
-                iterator.remove();
-                return;
-            }
+        Optional<Task> taskToRemove = tasks.stream()
+                .filter(task -> task.getId() == id)
+                .findFirst();
+        if (taskToRemove.isPresent()) {
+            tasks.remove(taskToRemove.get());
+        } else {
+            throw new TaskNotFoundException("Task with id " + id + " not found.");
         }
-        throw new TaskNotFoundException("Task with id " + id + " not found.");
     }
 
     @Override
@@ -90,98 +98,93 @@ public class TaskManagerImpl implements TaskManager {
 
     @Override
     public void changeTaskStatus(int id, TaskState taskState) {
-        for (Task task : tasks) {
-            if (task.getId() == id) {
-                task.setTaskState(taskState);
-                break;
-            }
-        }
+        tasks.stream()
+                .filter(task -> task.getId() == id)
+                .findFirst()
+                .ifPresentOrElse(
+                        task -> task.setTaskState(taskState),
+                        () -> {
+                            try {
+                                throw new TaskNotFoundException("Task with id " + id + " not found.");
+                            } catch (TaskNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                );
     }
+
 
     @Override
     public List<Task> getAllTaskByStatus(TaskState taskState) {
-        List<Task> foundTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getTaskState() == taskState) {
-                foundTasks.add(task);
-            }
-        }
-        return foundTasks;
+        return tasks.stream()
+                .filter(task -> task.getTaskState() == taskState)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Task> searchTask(String keyword) {
-        List<Task> foundTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getTitle().contains(keyword) || task.getDescription().contains(keyword)) {
-                foundTasks.add(task);
-            }
-        }
-        return foundTasks;
+        return tasks.stream()
+                .filter(task -> task.getTitle().contains(keyword.toLowerCase()) ||
+                        task.getDescription().contains(keyword.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public Task getTaskById(int id) throws TaskNotFoundException {
-        if (id <= 0) {
-            throw new IllegalArgumentException("Invalid id.");
-        }
-
-        if (tasks.isEmpty()) {
-            throw new EmptyTaskListException("List is empty.");
-        }
-
-        for (Task task : tasks) {
-            if (task.getId() == id) {
-                return task;
-            }
-        }
-        throw new TaskNotFoundException("Task with id " + id + " not found.");
+        return tasks.stream()
+                .filter(task -> task.getId() == id).findFirst()
+                .orElseThrow(() -> new TaskNotFoundException("Task with id " + id + " not found."));
     }
 
     @Override
     public void addStudyTask(String title, String description, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
         checkInvalidTaskData(title, taskState);
-        tasks.add(new StudyTask(taskId, title, description, taskState));
+        Task studyTask = new StudyTask.Builder()
+                .setId(taskId)
+                .setTitle(title)
+                .setDescription(description)
+                .setTaskState(taskState)
+                .build();
+        tasks.add(studyTask);
         taskId++;
     }
 
     @Override
     public List<StudyTask> getStudyTasks() {
-        List<StudyTask> studyTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task instanceof StudyTask) {
-                studyTasks.add((StudyTask) task);
-            }
-        }
-        return studyTasks;
-    }
-
-    @Override
-    public StudyTask getStudyTaskById(int id) throws TaskNotFoundException {
-        for (Task task : tasks) {
-            if (task.getId() == id && task instanceof StudyTask) {
-                return (StudyTask) task;
-            }
-        }
-        throw new TaskNotFoundException("Study task with id " + id + " not found.");
+        return tasks.stream()
+                .filter(task -> task instanceof StudyTask)
+                .map(task -> (StudyTask) task)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Task> getTasksByStatus(TaskState taskState) {
-        if (taskState != null) {
-            List<Task> foundTasks = new ArrayList<>();
-            if (tasks.isEmpty()) {
-                throw new EmptyTaskListException("List with tasks is empty!");
-            }
-            for (Task task : tasks) {
-                if (task.getTaskState() == taskState && !tasks.isEmpty()) {
-                    foundTasks.add(task);
-                }
-            }
-            return foundTasks;
-        } else {
-            throw new IllegalArgumentException("Invalid status.");
+        return tasks.stream()
+                .filter(task -> task.getTaskState().equals(taskState))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void saveTasksToFile(String path) throws FileOperationException {
+        try (FileOutputStream fileOut = new FileOutputStream(path);
+             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+            out.writeObject(tasks);
+        } catch (IOException e) {
+            throw new FileOperationException(e);
         }
+    }
+
+    @Override
+    public List<Task> readTasksFromFile(String path) throws FileOperationException {
+        List<Task> taskList;
+        try (FileInputStream fileIn = new FileInputStream(path);
+             ObjectInputStream in = new ObjectInputStream(fileIn)) {
+            taskList = (List<Task>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new FileOperationException(e);
+        }
+        tasks.addAll(taskList);
+        return tasks;
     }
 
     private void checkInvalidTaskData(String title, TaskState taskState) throws InvalidTaskDataException, InvalidTaskStateException {
